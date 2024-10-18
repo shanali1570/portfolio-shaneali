@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 // Ensure to provide default values if environment variables are not set
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY ?? '');
 const fromEmail: string = process.env.FROM_EMAIL ?? ''; // Default to empty string if not defined
 
 // Define the types for the request body
@@ -32,8 +32,8 @@ export async function POST(req: Request) {
 
     // Send email using Resend
     const data = await resend.emails.send({
-      from: fromEmail,
-      to: [fromEmail, email],
+      from: process.env.FROM_EMAIL ?? '',
+      to: [process.env.FROM_EMAIL ?? '', email],
       subject: subject,
       html: htmlContent, // Use the 'html' field instead of 'react'
     });
@@ -42,6 +42,7 @@ export async function POST(req: Request) {
     return NextResponse.json(data);
   } catch (error) {
     // Return an error response
+    console.error('Error sending email:', error);
     return NextResponse.json({ error: (error as Error).message });
   }
 }
