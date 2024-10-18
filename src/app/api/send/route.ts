@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 // Ensure to provide default values if environment variables are not set
-const resend = new Resend(process.env.RESEND_API_KEY ?? '');
+const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail: string = process.env.FROM_EMAIL ?? ''; // Default to empty string if not defined
 
 // Define the types for the request body
@@ -13,6 +13,9 @@ interface ContactRequestBody {
 }
 
 export async function POST(req: Request) {
+
+  
+
   try {
     // Parse the request body
     const { email, subject, message }: ContactRequestBody = await req.json();
