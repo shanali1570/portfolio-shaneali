@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-// Ensure to provide default values if environment variables are not set
+// Initialize the Resend instance
 const resend = new Resend(process.env.RESEND_API_KEY ?? '');
-const fromEmail: string = process.env.FROM_EMAIL ?? ''; // Default to empty string if not defined
 
 // Define the types for the request body
 interface ContactRequestBody {
@@ -13,16 +12,19 @@ interface ContactRequestBody {
 }
 
 export async function POST(req: Request) {
-
-  
+  // Check if the API key or fromEmail is missing
+  if (!process.env.RESEND_API_KEY || !process.env.FROM_EMAIL) {
+    console.warn('Missing RESEND_API_KEY or FROM_EMAIL in environment variables.');
+    return NextResponse.json({ error: 'Server configuration error.' }, { status: 500 });
+  }
 
   try {
     // Parse the request body
     const { email, subject, message }: ContactRequestBody = await req.json();
 
-    console.log(email, subject, message);
+    console.log('Email data received:', { email, subject, message });
 
-    // Define the HTML content
+    // Define the HTML content for the email
     const htmlContent = `
       <h1>${subject}</h1>
       <p>Thank you for contacting us!</p>
@@ -32,17 +34,16 @@ export async function POST(req: Request) {
 
     // Send email using Resend
     const data = await resend.emails.send({
-      from: process.env.FROM_EMAIL ?? '',
-      to: [process.env.FROM_EMAIL ?? '', email],
-      subject: subject,
-      html: htmlContent, // Use the 'html' field instead of 'react'
+      from: process.env.FROM_EMAIL,
+      to: [process.env.FROM_EMAIL, email],
+      subject,
+      html: htmlContent,
     });
 
     // Return the response data
     return NextResponse.json(data);
   } catch (error) {
-    // Return an error response
     console.error('Error sending email:', error);
-    return NextResponse.json({ error: (error as Error).message });
+    return NextResponse.json({ error: 'Failed to send email. Please try again later.' }, { status: 500 });
   }
 }
