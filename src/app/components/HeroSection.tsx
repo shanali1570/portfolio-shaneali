@@ -47,7 +47,7 @@ const HeroSection: React.FC = () => {
             />
           </h1>
           <p className="text-[#ADB7BE] text-base sm:text-lg mb-6 lg:text-xl">
-          I create a responsive, user-friendly web applications using the latest technologies like TypeScript, React, Next and Tailwind CSS. Passionate about building digital experiences that make a difference."
+          &rdquo;I create a responsive, user-friendly web applications using the latest technologies like TypeScript, React, Next and Tailwind CSS. Passionate about building digital experiences that make a difference.&rdquo;
           </p>
           <div>
             <Link
